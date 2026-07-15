@@ -141,8 +141,8 @@
   .checkbox-group{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-bottom:4px;
+    gap: 6px;
+    margin: 6px 0;
   }
   
   .checkbox-item{
@@ -221,19 +221,93 @@
     border-radius:16px;
     box-shadow:0 8px 32px rgba(31,42,36,0.15);
     color: var(--ink);
+    box-sizing: border-box;
   }
   .leaflet-popup-tip{
     background:var(--white);
   }
   .leaflet-popup-content{
     color: var(--ink);
+    /* Limita a altura máxima e adiciona scroll */
+    max-height: 55vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* Ajusta a largura máxima para telas menores */
+    width: 90vw !important;
+    max-width: 400px !important;
+    margin: 0;
+    padding: 12px;
+    box-sizing: border-box;
   }
+  
+  /* Remove a margem padrão do Leaflet para caber melhor */
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip-container{
+    width: auto;
+    max-width: 95vw;
+  }
+  
   .popup-form{
-    width:280px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
+  
+  .popup-view{
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Estilo dos labels */
+  .popup-form label{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    font-size: 13px;
+  }
+  
+  /* Estilo dos inputs e textarea */
   .popup-form textarea,
-  .popup-form input[type="text"],
-  .popup-form select{
+  .popup-form input[type="text"]{
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  
+  /* Estilo dos botões */
+  .popup-form .row{
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+  
+  .popup-form button{
+    padding: 10px 14px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  
+  /* Grupo de checkboxes */
+  .checkbox-group{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+    margin: 4px 0;
+  }
+  
+  /* Categorias na visualização */
+  .popup-view .category{
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+  
+  /* Estilo unificado dos inputs */
+  .popup-form textarea,
+  .popup-form input[type="text"]{
     width:100%;
     font-family:inherit;
     font-size:14px;
@@ -243,6 +317,7 @@
     background:var(--white);
     color:var(--ink);
     transition: all 0.2s ease;
+    box-sizing: border-box;
   }
   .popup-form textarea{
     min-height:80px;
@@ -261,13 +336,14 @@
     gap:8px;
     margin-top:12px;
   }
+  
   .popup-form button{
     font-family:inherit;
-    font-size:14px;
+    font-size:15px;
     font-weight:500;
     border:none;
     border-radius:10px;
-    padding:10px 16px;
+    padding:12px 16px;
     cursor:pointer;
     transition: all 0.2s ease;
   }
@@ -353,6 +429,44 @@
     background:var(--moss-dark);
     transform: translateY(-1px);
   }
+  
+  /* Estilo do botão de tema */
+  #theme-toggle{
+    padding: 10px 14px;
+    border: none;
+    border-radius: 10px;
+    background: var(--moss);
+    color: var(--white);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  #theme-toggle:hover{
+    background: var(--moss-dark);
+    transform: translateY(-1px);
+  }
+  
+  /* Ajustes para o container de controles no desktop */
+  @media (min-width: 769px){
+    header{
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .mobile-controls{
+      flex-direction: row !important;
+      align-items: center;
+      gap:12px;
+      width: auto !important;
+    }
+    
+    #theme-toggle{
+      width: auto;
+    }
+  }
   #search-results{
     position:absolute;
     top:100%;
@@ -410,10 +524,200 @@
   }
 
   @media (max-width: 768px){
-    .layout{ flex-direction:column; }
-    aside{ width:100%; border-left:none; border-top:1px solid var(--line); max-height:40vh; }
-    header{ flex-direction:column; align-items:stretch; padding:16px 20px; }
-    .search-wrap input{ max-width:none; flex:1; width:100%; }
+    /* Layout mobile: mapa ocupa a maior parte da tela */
+    .layout{ 
+      flex-direction:column; 
+      height: calc(100vh - 160px); /* Ajusta para header */
+    }
+    
+    #map{ 
+      min-height: 40vh; 
+      height: 40vh;
+      flex-shrink: 0;
+    }
+    
+    /* Formulário mobile fixo */
+    .mobile-form-container{
+      width: 100%;
+      background: var(--paper-2);
+      border-bottom: 1px solid var(--line);
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    .mobile-form-toggle{
+      width: 100%;
+      background: var(--moss);
+      color: var(--white);
+      border: none;
+      padding: 10px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+    
+    .mobile-form-toggle:hover{
+      background: var(--moss-dark);
+    }
+    
+    .mobile-form{
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+    }
+    
+    .mobile-form.expanded{
+      display: flex;
+    }
+    
+    .toggle-icon{
+      transition: transform 0.2s ease;
+    }
+    
+    .mobile-form-container.expanded .toggle-icon{
+      transform: rotate(180deg);
+    }
+    
+
+    
+    .form-field{
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .form-field label{
+      font-size: 13px;
+      color: #6b6551;
+    }
+    
+    .form-field input[type="text"],
+    .form-field textarea{
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--white);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    .form-field textarea{
+      min-height: 80px;
+      resize: vertical;
+    }
+    
+    .form-buttons{
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+    
+    .form-buttons button{
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .form-buttons #mobile-save{
+      background: var(--moss);
+      color: var(--white);
+    }
+    
+    .form-buttons #mobile-save:hover{
+      background: var(--moss-dark);
+    }
+    
+    .form-buttons #mobile-cancel{
+      background: transparent;
+      color: #6b6551;
+    }
+    
+    .form-buttons #mobile-cancel:hover{
+      background: rgba(0,0,0,0.05);
+    }
+    
+    aside{ 
+      width:100%; 
+      border-left:none; 
+      border-top:1px solid var(--line); 
+      max-height: 35vh;
+      height: 35vh;
+      position: relative;
+      z-index: 10;
+      overflow: hidden;
+    }
+    
+    header{ 
+      flex-direction:column; 
+      align-items:stretch; 
+      padding:12px 16px; 
+      gap: 10px;
+    }
+    
+    header h1{
+      font-size: 20px;
+    }
+    
+    .search-wrap{ 
+      flex-direction: column; 
+      gap: 8px;
+    }
+    
+    .search-wrap input{ 
+      max-width:none; 
+      width:100%;
+      padding: 12px 14px;
+    }
+    
+    .search-wrap button{
+      width: 100%;
+      padding: 12px 14px;
+    }
+    
+    /* Botão de tema no mobile */
+    #theme-toggle{
+      width: 100%;
+    }
+    
+
+    
+    /* Itens da lista no mobile */
+    .item{
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+  }
+  
+  /* Ocultar formulário mobile no desktop */
+  @media (min-width: 769px){
+    .mobile-form-container{
+      display: none !important;
+    }
+  }
+  
+  /* Ajustes para telas muito pequenas (ex: iPhone SE) */
+  @media (max-width: 400px){
+    header h1{
+      font-size: 18px;
+    }
+    
+    .popup-form{
+      width: 260px;
+    }
   }
 </style>
 </head>
@@ -422,23 +726,51 @@
 <header>
   <div>
     <h1>Ponto de <span class="mark">apoio</span> - Entregadores</h1>
-    <p>Clique em qualquer lugar do mapa para adicionar um ponto.</p>
+    <p style="margin-top:4px;">Clique no mapa para adicionar um ponto!</p>
   </div>
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+  <div class="mobile-controls" style="display:flex;flex-direction:column;gap:10px;align-items:stretch;width:100%;">
     <div class="search-wrap">
       <input type="text" id="search-input" placeholder="Buscar endereço..." autocomplete="off">
       <button id="search-btn" type="button">Buscar</button>
       <ul id="search-results"></ul>
     </div>
-    <button id="theme-toggle" style="padding:10px 14px;border:none;border-radius:10px;background:var(--moss);color:var(--white);cursor:pointer;font-size:14px;font-weight:500;transition:all 0.2s ease;">
+    <button id="theme-toggle">
       🌙 Tema
     </button>
   </div>
 </header>
 
 <div class="layout">
-  <div id="map"></div>
-  <aside>
+    <div id="map"></div>
+    <div class="mobile-form-container">
+      <button type="button" class="mobile-form-toggle" id="mobile-form-toggle">
+        <span class="toggle-text">Adicionar ponto de apoio</span>
+        <span class="toggle-icon">▼</span>
+      </button>
+      <div class="mobile-form" id="mobile-form">
+        <div class="form-field">
+          <label for="mobile-category">Categoria</label>
+          <div class="checkbox-group" id="mobile-categories"></div>
+        </div>
+        <div class="form-field">
+          <label for="mobile-number">Número</label>
+          <input type="text" id="mobile-number" placeholder="Ex: 1, 2, A, B...">
+        </div>
+        <div class="form-field">
+          <label for="mobile-address">Endereço</label>
+          <input type="text" id="mobile-address" placeholder="Endereço do local">
+        </div>
+        <div class="form-field">
+          <label for="mobile-comment">Comentário</label>
+          <textarea id="mobile-comment" placeholder="Escreva seu comentário sobre este local..."></textarea>
+        </div>
+        <div class="form-buttons">
+          <button type="button" id="mobile-cancel">Cancelar</button>
+          <button type="button" id="mobile-save">Salvar</button>
+        </div>
+      </div>
+    </div>
+    <aside>
     <div class="aside-head">
       <strong>Comentários</strong>
       <span id="count-label">0 no total</span>
@@ -492,10 +824,23 @@
   const searchResultsEl = document.getElementById('search-results');
   const filterInput = document.getElementById('filter-input');
   const themeToggle = document.getElementById('theme-toggle');
+  
+  // Elementos do formulário mobile
+  const mobileCategoriesContainer = document.getElementById('mobile-categories');
+  const mobileNumberInput = document.getElementById('mobile-number');
+  const mobileAddressInput = document.getElementById('mobile-address');
+  const mobileCommentInput = document.getElementById('mobile-comment');
+  const mobileSaveBtn = document.getElementById('mobile-save');
+  const mobileCancelBtn = document.getElementById('mobile-cancel');
+  const mobileFormToggle = document.getElementById('mobile-form-toggle');
+  const mobileFormContainer = document.getElementById('mobile-form');
+  const mobileFormWrapper = document.querySelector('.mobile-form-container');
 
   let comments = {}; // id -> {id, lat, lng, text, ts}
   const markers = {}; // id -> leaflet marker
   let map; // guardar referência do mapa
+  let selectedLatLng = null; // armazena a localização selecionada no mapa
+  const categories = ['Wifi', 'Tomada', 'Banheiro', 'Água', 'Descanso', 'Refeição', 'Estacionamento'];
   
   // Função para aplicar tema
   function applyTheme(theme) {
@@ -538,6 +883,113 @@
     html: '<div style="width:14px;height:14px;border-radius:50% 50% 50% 0;background:#3c5a45;border:2px solid #fffdf7;transform:rotate(-45deg);box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>',
     iconSize: [14,14],
     iconAnchor: [7,14]
+  });
+  
+  // Preencher checkboxes de categoria no formulário mobile
+  function populateMobileCategories() {
+    mobileCategoriesContainer.innerHTML = '';
+    categories.forEach(cat => {
+      const div = document.createElement('div');
+      div.className = 'checkbox-item';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.value = cat;
+      input.id = `mobile-cat-${cat.toLowerCase()}`;
+      const label = document.createElement('label');
+      label.htmlFor = `mobile-cat-${cat.toLowerCase()}`;
+      label.textContent = cat;
+      div.appendChild(input);
+      div.appendChild(label);
+      mobileCategoriesContainer.appendChild(div);
+    });
+  }
+  
+  // Função para alternar o formulário
+  function toggleMobileForm() {
+    mobileFormContainer.classList.toggle('expanded');
+    mobileFormWrapper.classList.toggle('expanded');
+  }
+  
+  // Função para expandir o formulário
+  function expandMobileForm() {
+    mobileFormContainer.classList.add('expanded');
+    mobileFormWrapper.classList.add('expanded');
+  }
+  
+  // Resetar formulário mobile
+  function resetMobileForm() {
+    selectedLatLng = null;
+    mobileNumberInput.value = '';
+    mobileAddressInput.value = '';
+    mobileCommentInput.value = '';
+    // Desmarcar todos os checkboxes
+    const checkboxes = mobileCategoriesContainer.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = false);
+  }
+  
+  // Preencher checkboxes de categoria
+  populateMobileCategories();
+  
+  // Listener do toggle
+  mobileFormToggle.addEventListener('click', toggleMobileForm);
+  
+  // Clique no mapa para selecionar localização e expandir formulário
+  map.on('click', (e) => {
+    selectedLatLng = e.latlng;
+    expandMobileForm();
+    // Tentar buscar o endereço automaticamente
+    reverseGeocode(e.latlng.lat, e.latlng.lng).then(address => {
+      if (address) {
+        mobileAddressInput.value = address;
+      }
+    });
+  });
+  
+  // Listener do botão salvar mobile
+  mobileSaveBtn.addEventListener('click', async () => {
+    if (!selectedLatLng) {
+      alert('Clique no mapa para selecionar o local!');
+      return;
+    }
+    
+    const text = mobileCommentInput.value.trim();
+    if (!text) {
+      alert('Escreva um comentário!');
+      mobileCommentInput.focus();
+      return;
+    }
+    
+    // Coletar categorias selecionadas
+    const selectedCats = [];
+    const checkboxes = mobileCategoriesContainer.querySelectorAll('input[type="checkbox"]:checked');
+    checkboxes.forEach(cb => selectedCats.push(cb.value));
+    
+    // Criar objeto do comentário
+    const comment = {
+      id: 'c' + Date.now() + Math.random().toString(36).slice(2,7),
+      lat: selectedLatLng.lat,
+      lng: selectedLatLng.lng,
+      text: text,
+      address: mobileAddressInput.value.trim(),
+      number: mobileNumberInput.value.trim(),
+      categories: selectedCats,
+      ts: Date.now()
+    };
+    
+    // Salvar
+    await saveComment(comment);
+    resetMobileForm();
+    // Recolher formulário
+    mobileFormContainer.classList.remove('expanded');
+    mobileFormWrapper.classList.remove('expanded');
+  });
+  
+  // Listener do botão cancelar mobile
+  mobileCancelBtn.addEventListener('click', () => {
+    resetMobileForm();
+    // Recolher formulário
+    mobileFormContainer.classList.remove('expanded');
+    mobileFormWrapper.classList.remove('expanded');
   });
 
   function setStatus(msg){ statusEl.textContent = msg; }
@@ -894,7 +1346,18 @@
         map.setView([lat, lon], 16);
         clearSearchResults();
         searchInput.value = r.display_name;
-        openNewCommentPopup(L.latLng(lat, lon), r.display_name);
+        
+        // Check if we're on mobile (mobile form is visible)
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          // Fill in mobile form and expand
+          selectedLatLng = L.latLng(lat, lon);
+          mobileAddressInput.value = r.display_name;
+          expandMobileForm();
+        } else {
+          // Desktop: open popup
+          openNewCommentPopup(L.latLng(lat, lon), r.display_name);
+        }
       });
       searchResultsEl.appendChild(li);
     });
