@@ -452,6 +452,32 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Firebase SDK (adicionado para armazenamento online) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+  // 🔑 COLOQUE SUAS CONFIGURAÇÕES DO FIREBASE AQUI!
+  // Para obter essas informações:
+  // 1. Acesse https://console.firebase.google.com/
+  // 2. Crie/Abra seu projeto
+  // 3. Clique no ícone de engrenagem (⚙️) > Project Settings
+  // 4. Na aba "General", abaixo de "Your apps", clique em "Add app" > Web (</>)
+  // 5. Copie a configuração do Firebase e cole aqui!
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY_AQUI",       // Substitua por sua apiKey
+    authDomain: "SEU_AUTH_DOMAIN",   // Substitua por seu authDomain
+    databaseURL: "SUA_DATABASE_URL", // Substitua por sua databaseURL
+    projectId: "SEU_PROJECT_ID",     // Substitua por seu projectId
+    storageBucket: "SEU_STORAGE_BUCKET", // Substitua por seu storageBucket
+    messagingSenderId: "SEU_SENDER_ID", // Substitua por seu messagingSenderId
+    appId: "SEU_APP_ID"              // Substitua por seu appId
+  };
+  
+  // Inicializar Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database(); // Referência ao Realtime Database
+</script>
 <script>
 (function(){
   const STORAGE_KEY_PREFIX = 'mapcomment:';
@@ -523,23 +549,15 @@
 
   async function loadAll(){
     try{
-      const res = await window.storage.list('comment:', true);
-      if(res && res.keys && res.keys.length){
-        for(const k of res.keys){
-          try{
-            const r = await window.storage.get(k, true);
-            if(r && r.value){
-              const c = JSON.parse(r.value);
-              comments[c.id] = c;
-            }
-          }catch(e){ /* skip missing */ }
-        }
-      }
+      // Carregar dados do Firebase Realtime Database
+      const snapshot = await database.ref('comments').once('value');
+      comments = snapshot.val() || {};
       renderAll();
-      setStatus(Object.keys(comments).length + ' comentário(s) salvos neste dispositivo compartilhado.');
+      const count = Object.keys(comments).length;
+      setStatus(count + ' ponto(s) salvos online!');
     }catch(e){
       console.error(e);
-      setStatus('Não foi possível carregar comentários salvos.');
+      setStatus('Não foi possível carregar os pontos salvos.');
     }
   }
 
@@ -680,12 +698,12 @@
   async function saveComment(c){
     comments[c.id] = c;
     try{
-      const res = await window.storage.set('comment:' + c.id, JSON.stringify(c), true);
-      if(!res) throw new Error('storage set failed');
-      setStatus('Comentário salvo.');
+      // Salvar ponto no Firebase Realtime Database
+      await database.ref('comments/' + c.id).set(c);
+      setStatus('Ponto salvo com sucesso!');
     }catch(e){
       console.error(e);
-      setStatus('Não foi possível salvar — o comentário ficará só nesta sessão.');
+      setStatus('Erro ao salvar o ponto — verifique a configuração do Firebase.');
     }
     renderAll();
   }
@@ -693,10 +711,12 @@
   async function deleteComment(id){
     delete comments[id];
     try{
-      await window.storage.delete('comment:' + id, true);
-      setStatus('Comentário removido.');
+      // Remover ponto do Firebase Realtime Database
+      await database.ref('comments/' + id).remove();
+      setStatus('Ponto removido com sucesso!');
     }catch(e){
       console.error(e);
+      setStatus('Erro ao remover o ponto — verifique a configuração do Firebase.');
     }
     renderAll();
   }
